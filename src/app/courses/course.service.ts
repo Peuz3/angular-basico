@@ -1,24 +1,32 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 import { Course } from "./course";
 
 @Injectable({
     providedIn: 'root'
 })
-export class CourseService{
+export class CourseService {
 
-    retrieveAll(): Course[]{
-        return COURSES;
+    private courseUrl: string = "http://localhost:3100/api/courses";
+
+    constructor(private httpClient: HttpClient) { }
+
+    retrieveAll(): Observable<Course[]> {
+        return this.httpClient.get<Course[]>(this.courseUrl);
     }
 
-    retrieveById(id:number):Course{
-        return COURSES.find((courseIterator:Course) => courseIterator.id === id);
+    retrieveById(id: number): Observable<Course> {
+        return this.httpClient.get<Course>(`${this.courseUrl}/${id}`);
     }
 
-    save(course: Course) : void{
-        if(course.id){
-            const index = COURSES.findIndex((courseIterator : Course) => courseIterator.id ===course.id);
-            COURSES[index] = course;
+    save(course: Course): Observable<Course> {
+        if (course.id) {
+            return this.httpClient.put<Course>(`${this.courseUrl}/${course.id}`, course);
+        }else{
+            return this.httpClient.post<Course>(`${this.courseUrl}`, course);
         }
+
     }
 }
 
@@ -100,18 +108,18 @@ var COURSES: Course[] = [
         rating: 3.2,
         releaseDate: 'April, 25 2019',
         description: 'Neste curso, os alunos irão obter um conhecimento aprofundado sobre os recursos disponíveis sobre Animation.',
-     },
+    },
 
-     {
-         id: 8,
-         name: 'Angular - Avançado',
-         imageUrl: 'assets/images/angular.png',
-         price: 12.99,
-         code: 'ANG-1206',
-         duration: 120,
-         rating: 2.2,
-         releaseDate: 'May, 1 2021',
-         description: 'Neste curso, os alunos irão obter um conhecimento aprofundado sobre os recursos disponíveis sobre Animation.',
-     }
+    {
+        id: 8,
+        name: 'Angular - Avançado',
+        imageUrl: 'assets/images/angular.png',
+        price: 12.99,
+        code: 'ANG-1206',
+        duration: 120,
+        rating: 2.2,
+        releaseDate: 'May, 1 2021',
+        description: 'Neste curso, os alunos irão obter um conhecimento aprofundado sobre os recursos disponíveis sobre Animation.',
+    }
 
 ];
